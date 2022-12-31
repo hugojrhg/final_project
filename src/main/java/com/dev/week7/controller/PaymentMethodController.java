@@ -56,7 +56,7 @@ public class PaymentMethodController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deletePaymentMethod(@PathVariable Long id) {
+    public ResponseEntity<PaymentMethodDTO> deletePaymentMethod(@PathVariable Long id) {
         paymentMethodService.deletePaymentMethod(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

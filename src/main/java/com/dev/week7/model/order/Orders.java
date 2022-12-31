@@ -1,6 +1,6 @@
 package com.dev.week7.model.order;
 
-import com.dev.week7.model.order.Checkout;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,14 +25,13 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "checkout_id")
     private Checkout checkout;
     @Column
     private Double totalValue;
-    @Column
-    private Integer address;
 
-
-
+    public Orders(Checkout checkout) {
+        this.checkout = checkout;
+    }
 }

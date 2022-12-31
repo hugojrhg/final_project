@@ -56,4 +56,11 @@ public class ProductService {
         return productRepository.save(oldProduct);
     }
 
+    public void updateQuantity(Long id, Integer quantity){
+        Product product = getProductById(id);
+
+        product.setQuantity(quantity);
+        productRepository.save(product);
+    }
+
 }

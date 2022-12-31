@@ -10,15 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CheckoutService {
 
     @Autowired
     CheckoutRepository checkoutRepository;
-
     @Autowired
     ProductService productService;
+    @Autowired
+    PaymentMethodService paymentMethodService;
 
     public List<Checkout> getAllCheckouts() {
         return checkoutRepository.findAll();
@@ -29,8 +31,7 @@ public class CheckoutService {
     }
 
     public Checkout createCheckout(Checkout checkout) {
-
-        takeProductOutOfStock(checkout);
+        checkout.getProducts().stream().forEach(CheckoutProduct::validProductQuantityInStock);
         return checkoutRepository.save(checkout);
     }
 
@@ -55,11 +56,15 @@ public class CheckoutService {
         if (newCheckout.getCustomer() != null) {
             oldCheckout.setCustomer(newCheckout.getCustomer());
         }
-        if (newCheckout.getProducts() != null) {
+        if (!newCheckout.getProducts().isEmpty()) {
             oldCheckout.setProducts(newCheckout.getProducts());
         }
         if (newCheckout.getPaymentMethod() != null) {
-            oldCheckout.setPaymentMethod(newCheckout.getPaymentMethod());
+            if (customer.getPaymentMethods().contains(paymentMethodService.getPaymentMethodById(newCheckout.getPaymentMethod().getId()))) {
+                oldCheckout.setPaymentMethod(paymentMethodService.getPaymentMethodById(newCheckout.getPaymentMethod().getId()));
+            } else {
+                return null;
+            }
         }
         if (newCheckout.getZipCode() != null) {
             if (customer.getZipCodes().contains(newCheckout.getZipCode())) {
@@ -75,31 +80,58 @@ public class CheckoutService {
 
     public void addProductToCheckout(Product product, Integer quantity, Long id) {
         Checkout checkout = getCheckoutById(id);
-        checkout.addProduct(product, quantity);
+        checkout.addProduct(productService.getProductById(product.getId()), quantity);
+        productService.updateQuantity(product.getId(), productService.getProductById(product.getId()).getQuantity() - quantity);
         checkoutRepository.save(checkout);
     }
 
     public void removeProductFromCheckout(Product product, Long id) {
         Checkout checkout = getCheckoutById(id);
+        Integer quantityInCheckout = 0;
+
+        for (CheckoutProduct checkoutProduct : checkout.getProducts()) {
+            if (checkoutProduct.getProduct().equals(product)) {
+                quantityInCheckout = checkoutProduct.getQuantity();
+            }
+        }
+
         checkout.removeProduct(product);
-    }
 
-    public void updateProductQuantityInCheckout(Checkout checkout, Integer quantity) {
-        for (CheckoutProduct checkoutProduct : checkout.getProducts()) {
-            Product product = checkoutProduct.getProduct();
-            product.setQuantity(quantity);
+        if (checkout.getProducts().isEmpty()) {
+            checkoutRepository.delete(checkout);
+        } else {
+            checkoutRepository.save(checkout);
         }
+
+        productService.updateQuantity(product.getId(), quantityInCheckout + product.getQuantity());
+
     }
 
-    public void takeProductOutOfStock(Checkout checkout) {
+    public void updateProductQuantityInCheckout(Long checkoutId, Long productId, Integer newQuantityInCheckout) {
+        Checkout checkout = getCheckoutById(checkoutId);
+        Product product = productService.getProductById(productId);
+
+
         for (CheckoutProduct checkoutProduct : checkout.getProducts()) {
-            Product product = productService.getProductById(checkoutProduct.getProduct().getId());
-            product.debitQuantity(product.getQuantity());
+            Integer quantityInCheckout = checkoutProduct.getQuantity();
+            Integer quantityInStock = checkoutProduct.getProduct().getQuantity();
+            Integer newQuantityInStock = quantityInStock + (quantityInCheckout - newQuantityInCheckout);
+            if (checkoutProduct.getProduct().equals(product)) {
+                productService.updateQuantity(checkoutProduct.getProduct().getId(), newQuantityInStock);
+                checkoutProduct.setQuantity(newQuantityInCheckout);
+            }
         }
+
+        checkoutRepository.save(checkout);
     }
 
-    public void resetProductInStock() {
+    public void takeProductOutOfStock(Product product, Integer quantity) {
+        product.debitQuantity(quantity);
+        productService.updateProduct(product.getId(), product);
+    }
 
+    public Double sumOfProductsValues(Checkout checkout){
+        return checkout.getProducts().stream().mapToDouble(checkoutProduct -> {return checkoutProduct.getTotalValue();}).sum();
     }
 
 }

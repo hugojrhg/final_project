@@ -34,11 +34,11 @@ public class Checkout {
     @JoinColumn(name = "customer_id")
     private Customer customer;
     @OneToMany(mappedBy = "checkout",
-            cascade = CascadeType.MERGE,
+            cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<CheckoutProduct> products = new ArrayList<>();
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
     private Integer zipCode;
@@ -57,11 +57,16 @@ public class Checkout {
     }
 
     public void removeProduct(Product product) {
+        int indexToRemove = 0;
+
         for (CheckoutProduct checkoutProduct : products) {
             if (checkoutProduct.getProduct().equals(product)) {
-                products.remove(checkoutProduct);
+                indexToRemove = products.indexOf(checkoutProduct);
             }
         }
+
+        products.remove(indexToRemove);
+
     }
 
 }

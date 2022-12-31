@@ -4,14 +4,12 @@ import com.dev.week7.exceptions.InsufficientFundsException;
 import com.dev.week7.model.customer.Customer;
 import com.dev.week7.model.interfaces.IPaymentMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,8 +28,8 @@ public class PaymentMethod implements IPaymentMethod {
     private Long id;
     private String name;
     private Double funds;
-    private Double reservedFunds;
-    @ManyToOne
+    private Double reservedFunds = 0.0;
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Customer customer;
 

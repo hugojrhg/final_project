@@ -21,25 +21,25 @@ public class CheckoutProductId implements Serializable {
     private Long checkoutId;
     @Column
     private Long productId;
-    @Column(name = "quantity")
-    private Integer productQuantity;
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o){
+            return true;
+        }
 
-        if (o == null || getClass() != o.getClass())
+        if (o == null || getClass() != o.getClass()){
             return false;
+        }
+
 
         CheckoutProductId that = (CheckoutProductId) o;
         return Objects.equals(checkoutId, that.checkoutId) &&
-                Objects.equals(productId, that.productId) &&
-                Objects.equals(productQuantity, that.productQuantity);
+                Objects.equals(productId, that.productId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(checkoutId, productId, productQuantity);
+        return Objects.hash(checkoutId, productId);
     }
 
 }

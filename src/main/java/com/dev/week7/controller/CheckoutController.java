@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/checkouts")
@@ -50,21 +49,21 @@ public class CheckoutController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Checkout> getCheckoutById(@PathVariable Long id) {
-        CheckoutDTO checkoutDTO = mapper.map(checkoutService.getCheckoutById(id), CheckoutDTO.class);
         return new ResponseEntity<>(checkoutService.getCheckoutById(id), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<CheckoutDTO> createCheckout(@Valid @RequestBody CheckoutDTO checkoutDTO) {
         Checkout checkout = new Checkout(checkoutDTO.getCustomer(), new ArrayList<>(), null, null);
-        //checkout.addProduct(checkoutDTO.getProduct(), checkoutDTO.getQuantity());
+
         checkoutService.createCheckout(checkout);
         checkoutService.addProductToCheckout(checkoutDTO.getProduct(), checkoutDTO.getQuantity(), checkout.getId());
+
         return new ResponseEntity<>(checkoutDTO, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteCheckout(@PathVariable Long id) {
+    public ResponseEntity<CheckoutDTO> deleteCheckout(@PathVariable Long id) {
         checkoutService.deleteCheckout(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -77,10 +76,10 @@ public class CheckoutController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CheckoutDTO> updateCheckoutFields(@PathVariable Long id, @Valid @RequestBody CheckoutDTO checkoutDTO) {
+    public ResponseEntity<CheckoutDTO> updateCheckoutFields(@PathVariable Long id, @RequestBody CheckoutDTO checkoutDTO) {
         Checkout checkout = mapper.map(checkoutDTO, Checkout.class);
 
-        if (checkoutService.updateCheckoutFields(checkout, id) == null){
+        if (checkoutService.updateCheckoutFields(checkout, id) == null) {
             return new ResponseEntity<>(checkoutDTO, HttpStatus.BAD_REQUEST);
         }
 
@@ -88,7 +87,7 @@ public class CheckoutController {
     }
 
     @PatchMapping("/addProduct/{productId}/{quantity}/toCheckout/{checkoutId}")
-    public ResponseEntity<CheckoutDTO> addProductToCheckout(@PathVariable Long productId, @PathVariable Integer quantity, @PathVariable Long checkoutId){
+    public ResponseEntity<CheckoutDTO> addProductToCheckout(@PathVariable Long productId, @PathVariable Integer quantity, @PathVariable Long checkoutId) {
         Product product = productService.getProductById(productId);
 
         checkoutService.addProductToCheckout(product, quantity, checkoutId);
@@ -96,7 +95,7 @@ public class CheckoutController {
     }
 
     @PatchMapping("/removeProduct/{productId}/fromCheckout/{checkoutId}")
-    public ResponseEntity<CheckoutDTO> removeProductFromCheckout(@PathVariable Long productId, @PathVariable Long checkoutId){
+    public ResponseEntity<CheckoutDTO> removeProductFromCheckout(@PathVariable Long productId, @PathVariable Long checkoutId) {
         Product product = productService.getProductById(productId);
 
         checkoutService.removeProductFromCheckout(product, checkoutId);
@@ -104,10 +103,8 @@ public class CheckoutController {
     }
 
     @PatchMapping("/{checkoutId}/newProductQuantity/{quantity}/toProduct/{productId}")
-    public ResponseEntity<CheckoutDTO> updateProductQuantityInCheckout(@PathVariable Integer quantity, @PathVariable Long checkoutId){
-        Checkout checkout = checkoutService.getCheckoutById(checkoutId);
-
-        checkoutService.updateProductQuantityInCheckout(checkout, quantity);
+    public ResponseEntity<CheckoutDTO> updateProductQuantityInCheckout(@PathVariable Integer quantity, @PathVariable Long checkoutId, @PathVariable Long productId) {
+        checkoutService.updateProductQuantityInCheckout(checkoutId, productId, quantity);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

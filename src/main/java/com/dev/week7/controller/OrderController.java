@@ -60,18 +60,4 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<OrdersDTO> updateOrder(@Valid @RequestBody OrdersDTO orderDTO, @PathVariable Long id) {
-        Orders order = mapper.map(orderDTO, Orders.class);
-        orderService.updateOrders(order, id);
-        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<OrdersDTO> updateOrderFields(@PathVariable Long id, @Valid @RequestBody OrdersDTO orderDTO) {
-        Orders order = mapper.map(orderDTO, Orders.class);
-        orderService.updateOrdersFields(order, id);
-        return new ResponseEntity<>(orderDTO, HttpStatus.OK);
-    }
-
 }

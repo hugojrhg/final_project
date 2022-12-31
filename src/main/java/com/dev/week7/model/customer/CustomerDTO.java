@@ -2,7 +2,6 @@ package com.dev.week7.model.customer;
 
 import com.dev.week7.model.payment.PaymentMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

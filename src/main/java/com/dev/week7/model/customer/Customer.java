@@ -1,6 +1,7 @@
 package com.dev.week7.model.customer;
 
 import com.dev.week7.model.payment.PaymentMethod;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -35,7 +36,7 @@ public class Customer {
     @Column
     private List<Integer> zipCodes;
     @ElementCollection
-    @OneToMany(mappedBy = "id", orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<PaymentMethod> paymentMethods;
 
 }
