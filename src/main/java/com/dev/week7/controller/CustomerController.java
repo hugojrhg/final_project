@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/customers")
+@CrossOrigin("*")
 public class CustomerController {
 
     @Autowired
@@ -69,7 +71,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CustomerPatchDTO> updateCustomerFirstName(@PathVariable Long id,@Valid @RequestBody CustomerPatchDTO customerDTO) {
+    public ResponseEntity<CustomerPatchDTO> updateCustomerFields(@PathVariable Long id,@Valid @RequestBody CustomerPatchDTO customerDTO) {
         Customer customer = mapper.map(customerDTO, Customer.class);
         customerService.updateCustomerFields(customer, id);
         return new ResponseEntity<>(customerDTO, HttpStatus.OK);

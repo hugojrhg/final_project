@@ -25,6 +25,32 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
 
     }
+    @ExceptionHandler()
+    public ResponseEntity<Object> handlePaymentMethodNotFoundException(PaymentMethodNotFoundException ex, WebRequest request) {
+
+        ApiError apiError = message(HttpStatus.NOT_FOUND, ex);
+
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+
+    }
+
+    @ExceptionHandler()
+    public ResponseEntity<Object> handleProductNotFoundException(ProductNotFoundException ex, WebRequest request) {
+
+        ApiError apiError = message(HttpStatus.NOT_FOUND, ex);
+
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+
+    }
+
+    @ExceptionHandler()
+    public ResponseEntity<Object> handleCheckoutNotFoundException(CheckoutNotFoundException ex, WebRequest request) {
+
+        ApiError apiError = message(HttpStatus.NOT_FOUND, ex);
+
+        return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
+
+    }
 
     @ExceptionHandler()
     public ResponseEntity<Object> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex, WebRequest request) {

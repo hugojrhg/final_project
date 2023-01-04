@@ -37,14 +37,8 @@ public class CheckoutController {
     ModelMapper mapper;
 
     @GetMapping
-    public ResponseEntity<List<CheckoutDTO>> getAllCheckouts() {
-        List<CheckoutDTO> checkoutsDTO =
-                checkoutService.getAllCheckouts()
-                        .stream()
-                        .map(checkout -> mapper.map(checkout, CheckoutDTO.class))
-                        .toList();
-
-        return new ResponseEntity<>(checkoutsDTO, HttpStatus.OK);
+    public ResponseEntity<List<Checkout>> getAllCheckouts() {
+        return new ResponseEntity<>(checkoutService.getAllCheckouts(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

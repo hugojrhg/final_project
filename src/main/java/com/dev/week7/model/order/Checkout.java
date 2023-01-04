@@ -3,6 +3,8 @@ package com.dev.week7.model.order;
 import com.dev.week7.model.customer.Customer;
 import com.dev.week7.model.payment.PaymentMethod;
 import com.dev.week7.model.product.Product;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,10 +31,12 @@ public class Checkout {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long id;
     @OneToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "checkout",
             cascade = CascadeType.ALL,
             orphanRemoval = true

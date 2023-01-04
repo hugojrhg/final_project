@@ -14,23 +14,24 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
-    public List<Product> getAllProducts(){
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product getProductById(Long id){
+    public Product getProductById(Long id) {
         return productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
     }
 
-    public Product createProduct(Product product){
+    public Product createProduct(Product product) {
         return productRepository.save(product);
     }
 
-    public void deleteProduct(Long id){
+    public void deleteProduct(Long id) {
+        getProductById(id);
         productRepository.deleteById(id);
     }
 
-    public Product updateProduct(Long id, Product newProduct){
+    public Product updateProduct(Long id, Product newProduct) {
         Product oldProduct = getProductById(id);
 
         oldProduct.setName(newProduct.getName());
@@ -43,20 +44,20 @@ public class ProductService {
     public Product updateProductFields(Product newProduct, Long id) {
         Product oldProduct = getProductById(id);
 
-        if (newProduct.getName() != null){
+        if (newProduct.getName() != null) {
             oldProduct.setName(newProduct.getName());
         }
-        if (newProduct.getPrice() != null){
+        if (newProduct.getPrice() != null) {
             oldProduct.setPrice(newProduct.getPrice());
         }
-        if (newProduct.getQuantity() != null){
+        if (newProduct.getQuantity() != null) {
             oldProduct.setQuantity(newProduct.getQuantity());
         }
 
         return productRepository.save(oldProduct);
     }
 
-    public void updateQuantity(Long id, Integer quantity){
+    public void updateQuantity(Long id, Integer quantity) {
         Product product = getProductById(id);
 
         product.setQuantity(quantity);

@@ -33,7 +33,7 @@ public class PaymentMethod implements IPaymentMethod {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Customer customer;
 
-    protected PaymentMethod(Double funds, String name) {
+    public PaymentMethod(Double funds, String name) {
         this.funds = funds;
         this.name = name;
     }

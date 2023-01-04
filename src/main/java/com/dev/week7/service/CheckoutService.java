@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CheckoutService {
@@ -31,7 +30,7 @@ public class CheckoutService {
     }
 
     public Checkout createCheckout(Checkout checkout) {
-        checkout.getProducts().stream().forEach(CheckoutProduct::validProductQuantityInStock);
+        checkout.getProducts().forEach(CheckoutProduct::validProductQuantityInStock);
         return checkoutRepository.save(checkout);
     }
 
@@ -130,8 +129,8 @@ public class CheckoutService {
         productService.updateProduct(product.getId(), product);
     }
 
-    public Double sumOfProductsValues(Checkout checkout){
-        return checkout.getProducts().stream().mapToDouble(checkoutProduct -> {return checkoutProduct.getTotalValue();}).sum();
+    public Double sumOfProductsValues(Checkout checkout) {
+        return checkout.getProducts().stream().mapToDouble(CheckoutProduct::getTotalValue).sum();
     }
 
 }

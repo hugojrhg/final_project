@@ -3,6 +3,7 @@ package com.dev.week7.model.order;
 import com.dev.week7.model.customer.Customer;
 import com.dev.week7.model.payment.PaymentMethod;
 import com.dev.week7.model.product.Product;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
